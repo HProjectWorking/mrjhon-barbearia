@@ -1,0 +1,1236 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mr. John Barbearia</title>
+<meta name="description" content="Agendamento online da Barbearia Mr. John">
+<meta name="theme-color" content="#1B4D34">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png" type="image/png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Mr. John">
+<meta name="mobile-web-app-capable" content="yes">
+<style>
+  :root{
+    --bg:#FFFFFF;
+    --surface:#FFFFFF;
+    --surface-2:#F0F5F1;
+    --text:#0D1410;
+    --text-muted:#49594E;
+    --accent:#1B4D34;
+    --accent-ink:#FFFFFF;
+    --line:#D7E1D8;
+    --danger:#B3261E;
+    --shadow: 0 1px 2px rgba(10,20,14,.07), 0 8px 24px rgba(10,20,14,.07);
+    --stripe-red:#A83A3A;
+    --stripe-cream:#F4EEDD;
+    --stripe-blue:#2E4A72;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#0A0B0A;
+      --surface:#14201A;
+      --surface-2:#0F1712;
+      --text:#F5F8F5;
+      --text-muted:#9CB3A3;
+      --accent:#3CA066;
+      --accent-ink:#08110B;
+      --line:#233028;
+      --danger:#FF7A6E;
+      --shadow: 0 1px 2px rgba(0,0,0,.45), 0 10px 28px rgba(0,0,0,.45);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#0A0B0A;
+    --surface:#14201A;
+    --surface-2:#0F1712;
+    --text:#F5F8F5;
+    --text-muted:#9CB3A3;
+    --accent:#3CA066;
+    --accent-ink:#08110B;
+    --line:#233028;
+    --danger:#FF7A6E;
+    --shadow: 0 1px 2px rgba(0,0,0,.45), 0 10px 28px rgba(0,0,0,.45);
+  }
+
+  *{box-sizing:border-box}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:"Work Sans", ui-sans-serif, system-ui, sans-serif;
+    padding-inline:18px;
+    padding-block:28px 40px;
+  }
+  .app{ max-width:460px; margin:0 auto; display:flex; flex-direction:column; gap:28px; }
+
+  h1,h2{ font-family:"Bebas Neue", "Arial Narrow", sans-serif; letter-spacing:.02em; text-wrap:balance; margin:0; }
+
+  .hero{ display:flex; flex-direction:column; align-items:center; gap:14px; text-align:center; }
+  .brand{ display:flex; justify-content:center; }
+  .logo{ width:100%; max-width:220px; height:auto; border-radius:12px; box-shadow:var(--shadow); }
+  .tagline{ margin:0; color:var(--text-muted); font-size:.98rem; max-width:34ch; }
+
+  #view-home{ display:flex; flex-direction:column; gap:28px; }
+  #view-booking{ display:flex; flex-direction:column; gap:18px; }
+
+  .phases{ display:flex; flex-direction:column; gap:8px; }
+  .phase-track{ list-style:none; margin:0; padding:0; display:flex; gap:6px; }
+  .phase-track li{
+    flex:1; height:6px; border-radius:99px; background:var(--line);
+  }
+  .phase-track li.current{ background:var(--accent); }
+  .phase-track li.done{ background:var(--accent); opacity:.5; }
+  .phase-caption{ margin:0; font-size:.82rem; color:var(--text-muted); }
+  .phase-caption strong{ color:var(--text); font-weight:600; }
+
+  .section-title{
+    font-size:1.5rem; color:var(--text); margin-bottom:2px;
+  }
+  main{ display:flex; flex-direction:column; gap:14px; }
+
+  .services{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:12px; }
+  .service-card{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:16px;
+    box-shadow:var(--shadow);
+    display:flex; align-items:center; gap:14px;
+  }
+  .service-icon{
+    flex:none; width:44px; height:44px; border-radius:10px;
+    background:var(--surface-2); display:flex; align-items:center; justify-content:center;
+  }
+  .service-icon svg{ width:24px; height:24px; }
+  .service-info{ flex:1 1 auto; min-width:0; display:flex; flex-direction:column; gap:2px; }
+  .service-info .name{ font-weight:600; font-size:1rem; color:var(--text); }
+  .service-info .price{
+    font-variant-numeric:tabular-nums; color:var(--accent); font-weight:700; font-size:.95rem;
+  }
+  .service-card button, .continue-btn{
+    flex:none;
+    font:inherit; font-weight:600; font-size:.86rem;
+    background:var(--accent); color:var(--accent-ink);
+    border:none; border-radius:10px; padding:10px 14px;
+    cursor:pointer;
+  }
+  .service-card button:focus-visible, .continue-btn:focus-visible, button:focus-visible, a:focus-visible{
+    outline:2px solid var(--accent); outline-offset:2px;
+  }
+  .service-card button:hover, .continue-btn:hover{ filter:brightness(1.06); }
+
+  footer{ text-align:center; color:var(--text-muted); font-size:.78rem; padding-top:4px; }
+
+  .back-link{
+    align-self:flex-start; background:none; border:none; padding:0;
+    font:inherit; font-weight:600; font-size:.88rem; color:var(--accent); cursor:pointer;
+  }
+
+  .booking-summary{
+    display:flex; align-items:baseline; justify-content:space-between; gap:10px;
+    background:var(--surface); border:1px solid var(--line); border-radius:14px;
+    padding:14px 16px; box-shadow:var(--shadow);
+  }
+  .booking-service{ margin:0; font-weight:600; }
+  .booking-price{ margin:0; color:var(--accent); font-weight:700; font-variant-numeric:tabular-nums; }
+
+  .date-strip{ display:flex; gap:10px; overflow-x:auto; padding-block:2px 6px; margin:0 -2px; padding-inline:2px; }
+  .date-chip{
+    flex:none; display:flex; flex-direction:column; align-items:center; gap:3px;
+    min-width:54px; padding:10px 8px; border-radius:12px;
+    border:1px solid var(--line); background:var(--surface); color:var(--text);
+    font:inherit; cursor:pointer;
+  }
+  .date-chip .dow{ font-size:.68rem; text-transform:uppercase; color:var(--text-muted); letter-spacing:.04em; }
+  .date-chip .dom{ font-size:1.05rem; font-weight:700; font-variant-numeric:tabular-nums; }
+  .date-chip[aria-selected="true"]{ background:var(--accent); border-color:var(--accent); color:var(--accent-ink); }
+  .date-chip[aria-selected="true"] .dow{ color:var(--accent-ink); opacity:.85; }
+  .date-chip[aria-disabled="true"]{ opacity:.35; cursor:not-allowed; }
+
+  .time-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(72px,1fr)); gap:8px; }
+  .time-chip{
+    padding:10px 6px; border-radius:10px; border:1px solid var(--line);
+    background:var(--surface); color:var(--text); font:inherit;
+    font-variant-numeric:tabular-nums; font-weight:600; font-size:.88rem;
+    text-align:center; cursor:pointer;
+  }
+  .time-chip[aria-selected="true"]{ background:var(--accent); border-color:var(--accent); color:var(--accent-ink); }
+  .time-chip[aria-disabled="true"]{ opacity:.35; text-decoration:line-through; cursor:not-allowed; background:var(--surface-2); }
+  .hint{ margin:0; color:var(--text-muted); font-size:.9rem; }
+
+  .continue-btn{ width:100%; padding:14px; font-size:1rem; }
+  .continue-btn:disabled{ opacity:.4; cursor:not-allowed; }
+
+  #view-form{ display:flex; flex-direction:column; gap:16px; }
+  #view-confirm{ display:flex; flex-direction:column; gap:18px; }
+
+  #bookingForm{ display:flex; flex-direction:column; }
+  .field{ display:flex; flex-direction:column; gap:6px; margin-bottom:14px; }
+  .field label{ font-size:.85rem; font-weight:600; color:var(--text); }
+  .field input{
+    font:inherit; font-size:1rem; padding:12px 14px; border-radius:10px;
+    border:1px solid var(--line); background:var(--surface); color:var(--text);
+  }
+  .field input:focus-visible{ outline:2px solid var(--accent); outline-offset:1px; }
+  .field input.invalid{ border-color:var(--danger); }
+  .field-error{ margin:0; font-size:.8rem; color:var(--danger); }
+  .field-error[hidden]{ display:none; }
+
+  .confirm-head{ display:flex; flex-direction:column; align-items:center; gap:10px; text-align:center; }
+  .confirm-icon{ width:56px; height:56px; }
+  .confirm-card{
+    background:var(--surface); border:1px solid var(--line); border-radius:14px;
+    padding:16px; box-shadow:var(--shadow); display:flex; flex-direction:column; gap:6px;
+  }
+  .confirm-card p{ margin:0; }
+  #confirmPrice{ color:var(--accent); font-weight:700; font-variant-numeric:tabular-nums; }
+
+  .admin-entry{
+    align-self:center; background:none; border:none; padding:4px;
+    font:inherit; font-weight:600; font-size:.82rem; color:var(--text-muted);
+    text-decoration:underline; text-underline-offset:2px; cursor:pointer;
+  }
+
+  #view-admin{ display:flex; flex-direction:column; gap:22px; }
+  .admin-section{ display:flex; flex-direction:column; gap:10px; }
+  .denied{ text-align:center; color:var(--text-muted); padding:24px 0; }
+
+  .stats-row{ display:grid; grid-template-columns:repeat(auto-fit, minmax(130px,1fr)); gap:10px; }
+  .stat-tile{
+    background:var(--surface); border:1px solid var(--line); border-radius:14px;
+    padding:14px; box-shadow:var(--shadow); display:flex; flex-direction:column; gap:4px;
+  }
+  .stat-label{ font-size:.76rem; color:var(--text-muted); }
+  .stat-value{ font-size:1.4rem; font-weight:700; font-variant-numeric:tabular-nums; color:var(--text); }
+
+  .admin-form{
+    display:flex; flex-direction:column; gap:12px;
+    background:var(--surface); border:1px solid var(--line); border-radius:14px;
+    padding:16px; box-shadow:var(--shadow);
+  }
+  .admin-form .row{ display:flex; gap:10px; }
+  .admin-form .row .field{ flex:1; margin-bottom:0; }
+  .field select, .field input[type="date"]{
+    font:inherit; font-size:1rem; padding:12px 14px; border-radius:10px;
+    border:1px solid var(--line); background:var(--surface); color:var(--text);
+  }
+
+  .booking-list, .clients-list{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:10px; }
+  .booking-row{
+    background:var(--surface); border:1px solid var(--line); border-radius:12px;
+    padding:12px 14px; display:flex; align-items:center; gap:10px; box-shadow:var(--shadow);
+  }
+  .booking-row .info{ flex:1 1 auto; min-width:0; display:flex; flex-direction:column; gap:2px; }
+  .booking-row .when{ margin:0; font-weight:700; font-variant-numeric:tabular-nums; font-size:.9rem; }
+  .booking-row .who{ margin:0; font-size:.85rem; color:var(--text-muted); }
+  .cancel-btn{
+    flex:none; background:none; border:1px solid var(--danger); color:var(--danger);
+    border-radius:8px; padding:8px 10px; font:inherit; font-size:.8rem; font-weight:600; cursor:pointer;
+  }
+  .cancel-btn:hover{ background:var(--danger); color:#fff; }
+  .row-actions{ display:flex; gap:8px; flex:none; }
+  .remind-btn{
+    flex:none; background:none; border:1px solid var(--accent); color:var(--accent);
+    border-radius:8px; padding:8px 10px; font:inherit; font-size:.8rem; font-weight:600;
+    cursor:pointer; text-decoration:none;
+  }
+  .remind-btn:hover{ background:var(--accent); color:var(--accent-ink); }
+  a.continue-btn{ display:block; text-align:center; text-decoration:none; }
+
+  .clients-list li{
+    display:flex; justify-content:space-between; gap:10px; font-size:.9rem;
+    padding:8px 0; border-bottom:1px solid var(--line);
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="hero">
+    <div class="brand">
+      <img class="logo" src="data:image/webp;base64,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" alt="Mr. John Barbearia" width="560" height="534">
+    </div>
+    <p class="tagline">Corte na régua, atendimento de respeito. Escolha o serviço para começar o agendamento.</p>
+  </header>
+
+  <section id="view-home">
+    <section class="phases" aria-label="Progresso da construção do app">
+      <ol class="phase-track">
+        <li class="done" title="Fase 1: tela inicial e serviços"></li>
+        <li class="done" title="Fase 2: calendário e horários"></li>
+        <li class="done" title="Fase 3: cadastro e confirmação"></li>
+        <li class="done" title="Fase 4: banco de dados"></li>
+        <li class="done" title="Fase 5: painel admin"></li>
+        <li class="current" title="Fase 6: WhatsApp"></li>
+        <li title="Fase 7: app Android/iOS"></li>
+      </ol>
+      <p class="phase-caption"><strong>Fase 6 de 7</strong> — WhatsApp</p>
+    </section>
+
+    <main>
+      <h2 class="section-title">Serviços</h2>
+      <ul class="services">
+        <li class="service-card" data-service="Corte de cabelo">
+          <span class="service-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round">
+              <circle cx="6" cy="6" r="2.6"/>
+              <circle cx="6" cy="18" r="2.6"/>
+              <line x1="8" y1="7.8" x2="20" y2="18"/>
+              <line x1="8" y1="16.2" x2="20" y2="6"/>
+            </svg>
+          </span>
+          <span class="service-info">
+            <span class="name">Corte de cabelo</span>
+            <span class="price">R$ 30</span>
+          </span>
+          <button type="button">Agendar</button>
+        </li>
+
+        <li class="service-card" data-service="Cabelo + barba">
+          <span class="service-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="6" y="5" width="13" height="4.2" rx="1" transform="rotate(20 6 5)"/>
+              <circle cx="8.4" cy="7.6" r="1.1" fill="var(--accent)" stroke="none"/>
+              <path d="M5 13c2 3 2 5.5 0 8"/>
+            </svg>
+          </span>
+          <span class="service-info">
+            <span class="name">Cabelo + barba</span>
+            <span class="price">R$ 60</span>
+          </span>
+          <button type="button">Agendar</button>
+        </li>
+
+        <li class="service-card" data-service="Realinhamento capilar">
+          <span class="service-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round">
+              <rect x="5" y="4" width="14" height="4" rx="1"/>
+              <line x1="6.5" y1="8" x2="6.5" y2="20"/>
+              <line x1="9.5" y1="8" x2="9.5" y2="18"/>
+              <line x1="12.5" y1="8" x2="12.5" y2="20"/>
+              <line x1="15.5" y1="8" x2="15.5" y2="18"/>
+              <line x1="18" y1="8" x2="18" y2="20"/>
+            </svg>
+          </span>
+          <span class="service-info">
+            <span class="name">Realinhamento capilar</span>
+            <span class="price">R$ 100</span>
+          </span>
+          <button type="button">Agendar</button>
+        </li>
+      </ul>
+    </main>
+
+    <footer>Aula 6 de 7 — construído com Claude, uma fase por vez.</footer>
+    <button type="button" class="admin-entry" id="openAdminBtn">Painel admin</button>
+  </section>
+
+  <section id="view-booking" hidden>
+    <button type="button" class="back-link" id="backBtn">← Voltar aos serviços</button>
+
+    <div class="booking-summary">
+      <p class="booking-service" id="bookingService">Serviço</p>
+      <p class="booking-price" id="bookingPrice">R$ 0</p>
+    </div>
+
+    <div>
+      <h2 class="section-title">Escolha o dia</h2>
+      <div class="date-strip" id="dateStrip" role="listbox" aria-label="Escolha o dia"></div>
+    </div>
+
+    <div>
+      <h2 class="section-title">Escolha o horário</h2>
+      <div class="time-grid" id="timeGrid" role="listbox" aria-label="Escolha o horário"></div>
+    </div>
+
+    <button type="button" class="continue-btn" id="continueBtn" disabled>Continuar</button>
+  </section>
+
+  <section id="view-form" hidden>
+    <button type="button" class="back-link" id="backToBooking">← Voltar</button>
+
+    <div class="booking-summary">
+      <p class="booking-service" id="formSummaryService">Serviço</p>
+      <p class="booking-price" id="formSummaryPrice">R$ 0</p>
+    </div>
+    <p class="hint" id="formSummaryWhen">Dia e horário</p>
+
+    <form id="bookingForm" novalidate>
+      <div class="field">
+        <label for="clientName">Nome completo</label>
+        <input type="text" id="clientName" name="clientName" autocomplete="name" placeholder="Seu nome" aria-describedby="clientNameError">
+        <p class="field-error" id="clientNameError" hidden></p>
+      </div>
+      <div class="field">
+        <label for="clientPhone">WhatsApp</label>
+        <input type="tel" id="clientPhone" name="clientPhone" inputmode="numeric" autocomplete="tel" placeholder="(85) 91234-5678" aria-describedby="clientPhoneError">
+        <p class="field-error" id="clientPhoneError" hidden></p>
+      </div>
+      <button type="submit" class="continue-btn">Confirmar agendamento</button>
+    </form>
+  </section>
+
+  <section id="view-confirm" hidden>
+    <div class="confirm-head">
+      <svg class="confirm-icon" viewBox="0 0 48 48" role="img" aria-label="Confirmado">
+        <circle cx="24" cy="24" r="22" fill="var(--accent)"/>
+        <path d="M14 24.5l6.5 6.5L34 17" fill="none" stroke="var(--accent-ink)" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <h2 class="section-title">Agendamento confirmado!</h2>
+    </div>
+    <div class="confirm-card">
+      <p><strong id="confirmService">Serviço</strong> · <span id="confirmPrice">R$ 0</span></p>
+      <p id="confirmWhen">Dia e horário</p>
+      <p id="confirmName">Nome</p>
+      <p id="confirmPhone">WhatsApp</p>
+    </div>
+    <p class="hint" id="confirmDbNote" hidden>Obs.: não consegui falar com o banco de dados agora nessa aba, então esse agendamento específico não ficou salvo de verdade — tenta de novo daqui a pouco.</p>
+    <a class="continue-btn" id="waConfirmLink" href="#" target="_blank" rel="noopener" hidden>Confirmar por WhatsApp</a>
+    <p class="hint" id="waUnavailableNote" hidden>A barbearia ainda não cadastrou o WhatsApp — assim que cadastrar (no painel admin), esse botão aparece.</p>
+    <button type="button" class="continue-btn" id="newBookingBtn">Novo agendamento</button>
+  </section>
+
+  <section id="view-admin" hidden>
+    <button type="button" class="back-link" id="backFromAdmin">← Voltar</button>
+    <h2 class="section-title">Painel admin</h2>
+
+    <div id="adminDenied" class="denied" hidden>
+      <p>Essa área é só para o Mr. John.</p>
+    </div>
+
+    <div id="adminContent" hidden>
+      <div class="admin-section">
+        <div class="stats-row" id="statsRow"></div>
+      </div>
+
+      <div class="admin-section">
+        <h2 class="section-title">WhatsApp da barbearia</h2>
+        <form id="contactForm" class="admin-form" novalidate>
+          <div class="field">
+            <label for="shopPhone">Número (com DDD)</label>
+            <input type="tel" id="shopPhone" name="shopPhone" inputmode="numeric" autocomplete="tel" placeholder="(85) 91234-5678">
+          </div>
+          <button type="submit" class="continue-btn">Salvar número</button>
+        </form>
+      </div>
+
+      <div class="admin-section">
+        <h2 class="section-title">Bloquear horário</h2>
+        <form id="blockForm" class="admin-form" novalidate>
+          <div class="row">
+            <div class="field">
+              <label for="blockDate">Dia</label>
+              <input type="date" id="blockDate" name="blockDate">
+            </div>
+            <div class="field">
+              <label for="blockTime">Horário</label>
+              <select id="blockTime" name="blockTime"></select>
+            </div>
+          </div>
+          <button type="submit" class="continue-btn">Bloquear horário</button>
+        </form>
+      </div>
+
+      <div class="admin-section">
+        <h2 class="section-title">Preços dos serviços</h2>
+        <form id="pricesForm" class="admin-form" novalidate>
+          <div class="field">
+            <label for="priceCorte">Corte de cabelo (R$)</label>
+            <input type="number" id="priceCorte" name="priceCorte" min="0" step="1" inputmode="numeric">
+          </div>
+          <div class="field">
+            <label for="priceBarba">Cabelo + barba (R$)</label>
+            <input type="number" id="priceBarba" name="priceBarba" min="0" step="1" inputmode="numeric">
+          </div>
+          <div class="field">
+            <label for="priceRealinhamento">Realinhamento capilar (R$)</label>
+            <input type="number" id="priceRealinhamento" name="priceRealinhamento" min="0" step="1" inputmode="numeric">
+          </div>
+          <button type="submit" class="continue-btn">Salvar preços</button>
+        </form>
+      </div>
+
+      <div class="admin-section">
+        <h2 class="section-title">Próximos agendamentos</h2>
+        <ul class="booking-list" id="bookingList"></ul>
+      </div>
+
+      <div class="admin-section">
+        <h2 class="section-title">Clientes</h2>
+        <ul class="clients-list" id="clientsList"></ul>
+      </div>
+    </div>
+  </section>
+</div>
+<script>
+  (function(){
+    var viewHome = document.getElementById('view-home');
+    var viewBooking = document.getElementById('view-booking');
+    var viewForm = document.getElementById('view-form');
+    var viewConfirm = document.getElementById('view-confirm');
+
+    var bookingService = document.getElementById('bookingService');
+    var bookingPrice = document.getElementById('bookingPrice');
+    var dateStrip = document.getElementById('dateStrip');
+    var timeGrid = document.getElementById('timeGrid');
+    var continueBtn = document.getElementById('continueBtn');
+    var backBtn = document.getElementById('backBtn');
+
+    var backToBooking = document.getElementById('backToBooking');
+    var formSummaryService = document.getElementById('formSummaryService');
+    var formSummaryPrice = document.getElementById('formSummaryPrice');
+    var formSummaryWhen = document.getElementById('formSummaryWhen');
+    var bookingForm = document.getElementById('bookingForm');
+    var clientName = document.getElementById('clientName');
+    var clientPhone = document.getElementById('clientPhone');
+    var clientNameError = document.getElementById('clientNameError');
+    var clientPhoneError = document.getElementById('clientPhoneError');
+
+    var confirmService = document.getElementById('confirmService');
+    var confirmPrice = document.getElementById('confirmPrice');
+    var confirmWhen = document.getElementById('confirmWhen');
+    var confirmName = document.getElementById('confirmName');
+    var confirmPhone = document.getElementById('confirmPhone');
+    var newBookingBtn = document.getElementById('newBookingBtn');
+    var confirmDbNote = document.getElementById('confirmDbNote');
+
+    // Banco de dados real da fase 4: null enquanto carrega, ou se essa
+    // visualização não tiver o recurso disponível (aí caímos no exemplo).
+    var dbPromise = (window.claude && typeof window.claude.use === 'function')
+      ? window.claude.use('db')
+      : Promise.resolve(null);
+
+    // Quem está vendo a página agora — usado só pra decidir se mostra o painel admin.
+    var userPromise = (window.claude && typeof window.claude.use === 'function')
+      ? window.claude.use('user')
+      : Promise.resolve(null);
+
+    var openAdminBtn = document.getElementById('openAdminBtn');
+    var backFromAdmin = document.getElementById('backFromAdmin');
+    var viewAdmin = document.getElementById('view-admin');
+    var adminDenied = document.getElementById('adminDenied');
+    var adminContent = document.getElementById('adminContent');
+    var statsRow = document.getElementById('statsRow');
+    var blockForm = document.getElementById('blockForm');
+    var blockDate = document.getElementById('blockDate');
+    var blockTime = document.getElementById('blockTime');
+    var pricesForm = document.getElementById('pricesForm');
+    var priceCorte = document.getElementById('priceCorte');
+    var priceBarba = document.getElementById('priceBarba');
+    var priceRealinhamento = document.getElementById('priceRealinhamento');
+    var bookingList = document.getElementById('bookingList');
+    var clientsList = document.getElementById('clientsList');
+    var contactForm = document.getElementById('contactForm');
+    var shopPhone = document.getElementById('shopPhone');
+    var waConfirmLink = document.getElementById('waConfirmLink');
+    var waUnavailableNote = document.getElementById('waUnavailableNote');
+
+    // Número de WhatsApp da barbearia, carregado do banco (fica em memória
+    // pra não precisar buscar de novo toda hora que alguém confirma).
+    var shopWhatsappDigits = null;
+
+    var DEFAULT_PRICES = { corte: 30, barba: 60, realinhamento: 100 };
+    var SERVICE_PRICE_KEYS = {
+      'Corte de cabelo': 'corte',
+      'Cabelo + barba': 'barba',
+      'Realinhamento capilar': 'realinhamento'
+    };
+
+    var DOW = ['dom','seg','ter','qua','qui','sex','sáb'];
+    var selectedDate = null;
+    var selectedTime = null;
+
+    function pad(n){ return n < 10 ? '0' + n : '' + n; }
+
+    function dateKey(d){ return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); }
+
+    function simpleHash(str){
+      var h = 0;
+      for (var i = 0; i < str.length; i++){ h = (h * 31 + str.charCodeAt(i)) >>> 0; }
+      return h;
+    }
+
+    function buildSlots(){
+      var slots = [];
+      for (var h = 9; h < 19; h++){
+        if (h === 12) continue; // pausa para o almoço
+        slots.push(pad(h) + ':00');
+        slots.push(pad(h) + ':30');
+      }
+      return slots;
+    }
+
+    // Exemplo determinístico, usado só quando o banco de dados não está
+    // disponível nesta visualização (assim a tela nunca fica quebrada).
+    function mockOccupied(dateStr, slots){
+      var seed = simpleHash(dateStr);
+      var occupied = {};
+      var count = 2 + (seed % 3);
+      for (var i = 0; i < count; i++){
+        occupied[slots[(seed + i * 7) % slots.length]] = true;
+      }
+      return occupied;
+    }
+
+    // Horários já ocupados NAQUELE dia, vindos de agendamentos reais
+    // salvos por qualquer pessoa que usou o app.
+    async function occupiedTimesFor(dateStr){
+      var slots = buildSlots();
+      var db = await dbPromise;
+      if (db){
+        try{
+          var snap = await db.collection('bookings').where('date', '==', dateStr).get();
+          var occupied = {};
+          snap.docs.forEach(function(doc){
+            var b = doc.data();
+            if (b && typeof b.time === 'string') occupied[b.time] = true;
+          });
+          return occupied;
+        } catch (err){
+          // banco falhou agora: cai no exemplo abaixo em vez de travar a tela
+        }
+      }
+      return mockOccupied(dateStr, slots);
+    }
+
+    function buildDates(){
+      var days = [];
+      var today = new Date();
+      today.setHours(0, 0, 0, 0);
+      for (var i = 0; i < 14; i++){
+        var d = new Date(today);
+        d.setDate(d.getDate() + i);
+        days.push(d);
+      }
+      return days;
+    }
+
+    function renderDateStrip(){
+      var days = buildDates();
+      dateStrip.innerHTML = '';
+      days.forEach(function(d){
+        var closed = d.getDay() === 0; // domingo fechado
+        var btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'date-chip';
+        btn.setAttribute('role', 'option');
+        var isSelected = selectedDate && dateKey(selectedDate) === dateKey(d);
+        btn.setAttribute('aria-selected', isSelected ? 'true' : 'false');
+        btn.innerHTML = '<span class="dow">' + DOW[d.getDay()] + '</span><span class="dom">' + d.getDate() + '</span>';
+        if (closed){
+          btn.setAttribute('aria-disabled', 'true');
+          btn.disabled = true;
+        } else {
+          btn.addEventListener('click', function(day){
+            return async function(){
+              selectedDate = day;
+              selectedTime = null;
+              renderDateStrip();
+              await renderTimeGrid();
+              updateContinue();
+            };
+          }(d));
+        }
+        dateStrip.appendChild(btn);
+      });
+    }
+
+    var timeGridToken = 0;
+
+    async function renderTimeGrid(){
+      var myToken = ++timeGridToken;
+      timeGrid.innerHTML = '';
+      if (!selectedDate){
+        var p = document.createElement('p');
+        p.className = 'hint';
+        p.textContent = 'Escolha um dia para ver os horários.';
+        timeGrid.appendChild(p);
+        return;
+      }
+      var loading = document.createElement('p');
+      loading.className = 'hint';
+      loading.textContent = 'Carregando horários…';
+      timeGrid.appendChild(loading);
+
+      var dateStr = dateKey(selectedDate);
+      var occupied = await occupiedTimesFor(dateStr);
+      if (myToken !== timeGridToken) return; // usuário já trocou de dia
+
+      timeGrid.innerHTML = '';
+      buildSlots().forEach(function(t){
+        var btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'time-chip';
+        btn.setAttribute('role', 'option');
+        btn.textContent = t;
+        var isSelected = selectedTime === t;
+        btn.setAttribute('aria-selected', isSelected ? 'true' : 'false');
+        if (occupied[t]){
+          btn.setAttribute('aria-disabled', 'true');
+          btn.disabled = true;
+        } else {
+          btn.addEventListener('click', function(time){
+            return async function(){
+              selectedTime = time;
+              await renderTimeGrid();
+              updateContinue();
+            };
+          }(t));
+        }
+        timeGrid.appendChild(btn);
+      });
+    }
+
+    function updateContinue(){
+      continueBtn.disabled = !(selectedDate && selectedTime);
+    }
+
+    async function startBooking(name, price){
+      bookingService.textContent = name;
+      bookingPrice.textContent = price;
+      selectedDate = null;
+      selectedTime = null;
+      viewHome.hidden = true;
+      viewBooking.hidden = false;
+      renderDateStrip();
+      await renderTimeGrid();
+      updateContinue();
+      window.scrollTo(0, 0);
+    }
+
+    document.querySelectorAll('.service-card button').forEach(function(btn){
+      btn.addEventListener('click', function(e){
+        var card = e.target.closest('.service-card');
+        var name = card.getAttribute('data-service');
+        var price = card.querySelector('.price').textContent;
+        startBooking(name, price);
+      });
+    });
+
+    backBtn.addEventListener('click', function(){
+      viewBooking.hidden = true;
+      viewHome.hidden = false;
+    });
+
+    function capitalize(s){ return s.charAt(0).toUpperCase() + s.slice(1); }
+
+    function formatWhen(d, t){
+      return capitalize(DOW[d.getDay()]) + ', ' + pad(d.getDate()) + '/' + pad(d.getMonth() + 1) + ' às ' + t;
+    }
+
+    function goToForm(){
+      formSummaryService.textContent = bookingService.textContent;
+      formSummaryPrice.textContent = bookingPrice.textContent;
+      formSummaryWhen.textContent = formatWhen(selectedDate, selectedTime);
+      viewBooking.hidden = true;
+      viewForm.hidden = false;
+      window.scrollTo(0, 0);
+    }
+
+    continueBtn.addEventListener('click', function(){
+      if (continueBtn.disabled) return;
+      goToForm();
+    });
+
+    backToBooking.addEventListener('click', function(){
+      viewForm.hidden = true;
+      viewBooking.hidden = false;
+    });
+
+    // Máscara simples de WhatsApp: (DD) 9XXXX-XXXX
+    function maskPhone(digits){
+      var p1 = digits.slice(0, 2);
+      var rest = digits.slice(2);
+      var p2, p3;
+      if (rest.length > 4){
+        p2 = rest.slice(0, rest.length - 4);
+        p3 = rest.slice(rest.length - 4);
+      } else {
+        p2 = rest;
+        p3 = '';
+      }
+      var out = '';
+      if (p1) out += '(' + p1 + (p1.length === 2 ? ') ' : '');
+      if (p2) out += p2;
+      if (p3) out += '-' + p3;
+      return out;
+    }
+
+    clientPhone.addEventListener('input', function(){
+      var digits = clientPhone.value.replace(/\D/g, '').slice(0, 11);
+      clientPhone.value = maskPhone(digits);
+    });
+
+    if (shopPhone){
+      shopPhone.addEventListener('input', function(){
+        var digits = shopPhone.value.replace(/\D/g, '').slice(0, 11);
+        shopPhone.value = maskPhone(digits);
+      });
+    }
+
+    // Número de WhatsApp -> formato que o link wa.me espera (com código do país).
+    function toWaNumber(digits){
+      digits = String(digits || '').replace(/\D/g, '');
+      return digits.length >= 12 ? digits : '55' + digits;
+    }
+
+    function setFieldError(input, errorEl, message){
+      if (message){
+        input.classList.add('invalid');
+        input.setAttribute('aria-invalid', 'true');
+        errorEl.textContent = message;
+        errorEl.hidden = false;
+      } else {
+        input.classList.remove('invalid');
+        input.setAttribute('aria-invalid', 'false');
+        errorEl.hidden = true;
+      }
+    }
+
+    bookingForm.addEventListener('submit', async function(e){
+      e.preventDefault();
+
+      var nameVal = clientName.value.trim();
+      var phoneDigits = clientPhone.value.replace(/\D/g, '');
+      var valid = true;
+
+      if (nameVal.length < 3){
+        setFieldError(clientName, clientNameError, 'Digite seu nome completo.');
+        valid = false;
+      } else {
+        setFieldError(clientName, clientNameError, '');
+      }
+
+      if (phoneDigits.length !== 10 && phoneDigits.length !== 11){
+        setFieldError(clientPhone, clientPhoneError, 'Digite um WhatsApp válido, com DDD.');
+        valid = false;
+      } else {
+        setFieldError(clientPhone, clientPhoneError, '');
+      }
+
+      if (!valid) return;
+
+      var submitBtn = bookingForm.querySelector('button[type="submit"]');
+      var originalLabel = submitBtn.textContent;
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Confirmando…';
+
+      var saved = false;
+      try{
+        var db = await dbPromise;
+        if (db){
+          // Grava o agendamento de verdade: sobrevive a fechar a aba,
+          // atualizar a página e é o que outras pessoas veem como ocupado.
+          await db.collection('bookings').add({
+            service: bookingService.textContent,
+            price: bookingPrice.textContent,
+            date: dateKey(selectedDate),
+            time: selectedTime,
+            name: nameVal,
+            phone: clientPhone.value,
+            createdAt: new Date().toISOString()
+          });
+          saved = true;
+        }
+      } catch (err){
+        setFieldError(clientPhone, clientPhoneError, 'Não consegui salvar agora. Tenta de novo em instantes.');
+        submitBtn.disabled = false;
+        submitBtn.textContent = originalLabel;
+        return;
+      }
+
+      submitBtn.disabled = false;
+      submitBtn.textContent = originalLabel;
+
+      confirmService.textContent = bookingService.textContent;
+      confirmPrice.textContent = bookingPrice.textContent;
+      confirmWhen.textContent = formSummaryWhen.textContent;
+      confirmName.textContent = nameVal;
+      confirmPhone.textContent = clientPhone.value;
+      confirmDbNote.hidden = saved;
+
+      if (shopWhatsappDigits){
+        var waText = 'Olá! Quero confirmar meu agendamento na Barbearia Mr. John: ' +
+          bookingService.textContent + ' - ' + formSummaryWhen.textContent + '. Nome: ' + nameVal + '.';
+        waConfirmLink.href = 'https://wa.me/' + toWaNumber(shopWhatsappDigits) + '?text=' + encodeURIComponent(waText);
+        waConfirmLink.hidden = false;
+        waUnavailableNote.hidden = true;
+      } else {
+        waConfirmLink.hidden = true;
+        waUnavailableNote.hidden = false;
+      }
+
+      viewForm.hidden = true;
+      viewConfirm.hidden = false;
+      window.scrollTo(0, 0);
+    });
+
+    newBookingBtn.addEventListener('click', function(){
+      bookingForm.reset();
+      setFieldError(clientName, clientNameError, '');
+      setFieldError(clientPhone, clientPhoneError, '');
+      confirmDbNote.hidden = true;
+      selectedDate = null;
+      selectedTime = null;
+      viewConfirm.hidden = true;
+      viewHome.hidden = false;
+      window.scrollTo(0, 0);
+    });
+
+    // ---------- Preços vindos do banco (home) ----------
+
+    async function loadServicePrices(){
+      var db = await dbPromise;
+      if (!db) return;
+      try{
+        var snap = await db.doc('config/services').get();
+        if (!snap.exists) return;
+        var data = snap.data() || {};
+        document.querySelectorAll('.service-card').forEach(function(card){
+          var name = card.getAttribute('data-service');
+          var key = SERVICE_PRICE_KEYS[name];
+          if (key && typeof data[key] === 'number'){
+            card.querySelector('.price').textContent = 'R$ ' + data[key];
+          }
+        });
+      } catch (err){
+        // sem banco agora: os preços padrão do HTML continuam valendo
+      }
+    }
+    loadServicePrices();
+
+    async function loadShopContact(){
+      var db = await dbPromise;
+      if (!db) return;
+      try{
+        var snap = await db.doc('config/contact').get();
+        if (snap.exists){
+          var data = snap.data() || {};
+          if (typeof data.whatsapp === 'string') shopWhatsappDigits = data.whatsapp;
+        }
+      } catch (err){
+        // sem banco agora: o botão de confirmar por WhatsApp fica escondido
+      }
+    }
+    loadShopContact();
+
+    // ---------- Painel admin ----------
+
+    function pad2DateBR(dateStr){
+      var parts = (dateStr || '').split('-');
+      return parts.length === 3 ? parts[2] + '/' + parts[1] : (dateStr || '');
+    }
+
+    function statTile(label, value){
+      var div = document.createElement('div');
+      div.className = 'stat-tile';
+      var l = document.createElement('span'); l.className = 'stat-label'; l.textContent = label;
+      var v = document.createElement('span'); v.className = 'stat-value'; v.textContent = value;
+      div.appendChild(l);
+      div.appendChild(v);
+      return div;
+    }
+
+    function bookingRow(item){
+      var b = item.data;
+      var li = document.createElement('li');
+      li.className = 'booking-row';
+
+      var info = document.createElement('div');
+      info.className = 'info';
+      var when = document.createElement('p');
+      when.className = 'when';
+      when.textContent = pad2DateBR(b.date) + ' às ' + b.time;
+      var who = document.createElement('p');
+      who.className = 'who';
+      who.textContent = (b.name || '—') + ' · ' + (b.service || '—') + ' · ' + (b.price || '');
+      info.appendChild(when);
+      info.appendChild(who);
+
+      var remindLink = document.createElement('a');
+      remindLink.className = 'remind-btn';
+      remindLink.textContent = 'Lembrar';
+      remindLink.target = '_blank';
+      remindLink.rel = 'noopener';
+      var clientDigits = String(b.phone || '').replace(/\D/g, '');
+      if (clientDigits){
+        var reminderText = 'Olá ' + (b.name || '') + '! Passando pra lembrar do seu agendamento na Barbearia Mr. John: ' +
+          (b.service || '') + ' no dia ' + pad2DateBR(b.date) + ' às ' + b.time + '. Até lá! 💈';
+        remindLink.href = 'https://wa.me/' + toWaNumber(clientDigits) + '?text=' + encodeURIComponent(reminderText);
+      } else {
+        remindLink.href = '#';
+        remindLink.setAttribute('aria-disabled', 'true');
+      }
+
+      var cancelBtn = document.createElement('button');
+      cancelBtn.type = 'button';
+      cancelBtn.className = 'cancel-btn';
+      cancelBtn.textContent = 'Cancelar';
+      cancelBtn.addEventListener('click', async function(){
+        cancelBtn.disabled = true;
+        cancelBtn.textContent = 'Cancelando…';
+        try{
+          var db = await dbPromise;
+          if (db) await db.doc('bookings/' + item.id).delete();
+          await refreshAdminData();
+        } catch (err){
+          cancelBtn.disabled = false;
+          cancelBtn.textContent = 'Cancelar';
+        }
+      });
+
+      var actions = document.createElement('div');
+      actions.className = 'row-actions';
+      actions.appendChild(remindLink);
+      actions.appendChild(cancelBtn);
+
+      li.appendChild(info);
+      li.appendChild(actions);
+      return li;
+    }
+
+    async function refreshAdminData(){
+      var db = await dbPromise;
+      if (!db){
+        statsRow.innerHTML = '';
+        var noDb = document.createElement('p');
+        noDb.className = 'hint';
+        noDb.textContent = 'Banco de dados indisponível agora.';
+        statsRow.appendChild(noDb);
+        bookingList.innerHTML = '';
+        clientsList.innerHTML = '';
+        return;
+      }
+
+      var snap;
+      try{
+        snap = await db.collection('bookings').orderBy('date').limit(500).get();
+      } catch (err){
+        statsRow.innerHTML = '';
+        var errP = document.createElement('p');
+        errP.className = 'hint';
+        errP.textContent = 'Não consegui carregar os dados agora.';
+        statsRow.appendChild(errP);
+        return;
+      }
+
+      var real = [];
+      snap.docs.forEach(function(doc){
+        var b = doc.data();
+        if (b && !b.blocked) real.push({ id: doc.id, data: b });
+      });
+
+      var total = real.length;
+      var revenue = real.reduce(function(sum, item){
+        return sum + (parseInt(String(item.data.price || '').replace(/\D/g, ''), 10) || 0);
+      }, 0);
+      statsRow.innerHTML = '';
+      statsRow.appendChild(statTile('Agendamentos', String(total)));
+      statsRow.appendChild(statTile('Faturamento', 'R$ ' + revenue));
+
+      var todayKey = dateKey(new Date());
+      var upcoming = real
+        .filter(function(item){ return item.data.date >= todayKey; })
+        .sort(function(a, b){
+          return (a.data.date + a.data.time).localeCompare(b.data.date + b.data.time);
+        });
+
+      bookingList.innerHTML = '';
+      if (upcoming.length === 0){
+        var noBookings = document.createElement('p');
+        noBookings.className = 'hint';
+        noBookings.textContent = 'Nenhum agendamento futuro.';
+        bookingList.appendChild(noBookings);
+      } else {
+        upcoming.forEach(function(item){ bookingList.appendChild(bookingRow(item)); });
+      }
+
+      var seen = {};
+      var clients = [];
+      real.forEach(function(item){
+        var key = item.data.phone || item.data.name;
+        if (key && !seen[key]){ seen[key] = true; clients.push(item.data); }
+      });
+      clientsList.innerHTML = '';
+      if (clients.length === 0){
+        var noClients = document.createElement('p');
+        noClients.className = 'hint';
+        noClients.textContent = 'Nenhum cliente ainda.';
+        clientsList.appendChild(noClients);
+      } else {
+        clients.forEach(function(c){
+          var li = document.createElement('li');
+          var nameSpan = document.createElement('span'); nameSpan.textContent = c.name || '—';
+          var phoneSpan = document.createElement('span'); phoneSpan.textContent = c.phone || '—';
+          li.appendChild(nameSpan);
+          li.appendChild(phoneSpan);
+          clientsList.appendChild(li);
+        });
+      }
+    }
+
+    function populateBlockTimeOptions(){
+      blockTime.innerHTML = '';
+      buildSlots().forEach(function(t){
+        var opt = document.createElement('option');
+        opt.value = t;
+        opt.textContent = t;
+        blockTime.appendChild(opt);
+      });
+    }
+
+    async function loadPricesIntoForm(){
+      var prices = DEFAULT_PRICES;
+      var db = await dbPromise;
+      if (db){
+        try{
+          var snap = await db.doc('config/services').get();
+          if (snap.exists){
+            var data = snap.data() || {};
+            prices = {
+              corte: typeof data.corte === 'number' ? data.corte : DEFAULT_PRICES.corte,
+              barba: typeof data.barba === 'number' ? data.barba : DEFAULT_PRICES.barba,
+              realinhamento: typeof data.realinhamento === 'number' ? data.realinhamento : DEFAULT_PRICES.realinhamento
+            };
+          }
+        } catch (err){
+          // fica com os preços padrão
+        }
+      }
+      priceCorte.value = prices.corte;
+      priceBarba.value = prices.barba;
+      priceRealinhamento.value = prices.realinhamento;
+    }
+
+    async function loadContactIntoForm(){
+      var digits = '';
+      var db = await dbPromise;
+      if (db){
+        try{
+          var snap = await db.doc('config/contact').get();
+          if (snap.exists){
+            var data = snap.data() || {};
+            if (typeof data.whatsapp === 'string') digits = data.whatsapp;
+          }
+        } catch (err){
+          // fica com o campo vazio
+        }
+      }
+      shopPhone.value = digits ? maskPhone(digits) : '';
+    }
+
+    async function goToAdmin(){
+      viewHome.hidden = true;
+      viewAdmin.hidden = false;
+      adminDenied.hidden = true;
+      adminContent.hidden = true;
+      window.scrollTo(0, 0);
+
+      var user = await userPromise;
+      var allowed = !!(user && typeof user.canEdit === 'function' && user.canEdit());
+      if (!allowed){
+        adminDenied.hidden = false;
+        return;
+      }
+
+      adminContent.hidden = false;
+      var todayStr = dateKey(new Date());
+      blockDate.min = todayStr;
+      blockDate.value = todayStr;
+      populateBlockTimeOptions();
+      await loadPricesIntoForm();
+      await loadContactIntoForm();
+      await refreshAdminData();
+    }
+
+    openAdminBtn.addEventListener('click', goToAdmin);
+
+    backFromAdmin.addEventListener('click', function(){
+      viewAdmin.hidden = true;
+      viewHome.hidden = false;
+    });
+
+    contactForm.addEventListener('submit', async function(e){
+      e.preventDefault();
+      var submitBtn = contactForm.querySelector('button[type="submit"]');
+      var original = submitBtn.textContent;
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Salvando…';
+      var digits = shopPhone.value.replace(/\D/g, '');
+      try{
+        var db = await dbPromise;
+        if (db){
+          await db.doc('config/contact').set({ whatsapp: digits });
+          shopWhatsappDigits = digits;
+        }
+      } catch (err){
+        // mantém o valor no campo pra tentar de novo
+      }
+      submitBtn.disabled = false;
+      submitBtn.textContent = original;
+    });
+
+    blockForm.addEventListener('submit', async function(e){
+      e.preventDefault();
+      if (!blockDate.value || !blockTime.value) return;
+      var submitBtn = blockForm.querySelector('button[type="submit"]');
+      var original = submitBtn.textContent;
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Bloqueando…';
+      try{
+        var db = await dbPromise;
+        if (db){
+          await db.collection('bookings').add({
+            blocked: true,
+            service: 'Bloqueado',
+            price: 'R$ 0',
+            date: blockDate.value,
+            time: blockTime.value,
+            name: 'Bloqueado pelo admin',
+            phone: '',
+            createdAt: new Date().toISOString()
+          });
+          await refreshAdminData();
+        }
+      } catch (err){
+        // deixa o formulário como está pra tentar de novo
+      }
+      submitBtn.disabled = false;
+      submitBtn.textContent = original;
+    });
+
+    pricesForm.addEventListener('submit', async function(e){
+      e.preventDefault();
+      var submitBtn = pricesForm.querySelector('button[type="submit"]');
+      var original = submitBtn.textContent;
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Salvando…';
+      try{
+        var db = await dbPromise;
+        if (db){
+          await db.doc('config/services').set({
+            corte: Number(priceCorte.value) || 0,
+            barba: Number(priceBarba.value) || 0,
+            realinhamento: Number(priceRealinhamento.value) || 0
+          });
+          await loadServicePrices();
+        }
+      } catch (err){
+        // mantém os valores no formulário pra tentar de novo
+      }
+      submitBtn.disabled = false;
+      submitBtn.textContent = original;
+    });
+  })();
+
+
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function () {
+      navigator.serviceWorker.register('service-worker.js').catch(function () {});
+    });
+  }
+</script>
+</body>
+</html>
