@@ -190,9 +190,13 @@
   }
   .admin-entry:hover{ background:var(--accent); color:var(--accent-ink); }
   .logout-btn{
-    align-self:flex-end; background:none; border:none; padding:0;
-    font:inherit; font-weight:600; font-size:.85rem; color:var(--danger); cursor:pointer;
+    align-self:flex-end; display:inline-flex; align-items:center; gap:6px;
+    background:var(--surface); border:1.5px solid var(--danger); border-radius:999px;
+    padding:9px 16px;
+    font:inherit; font-weight:600; font-size:.85rem; color:var(--danger);
+    box-shadow:var(--shadow); cursor:pointer; transition:background-color .15s, color .15s;
   }
+  .logout-btn:hover{ background:var(--danger); color:#fff; }
 
   #view-admin:not([hidden]){ display:flex; flex-direction:column; gap:22px; }
   .admin-section{ display:flex; flex-direction:column; gap:10px; }
@@ -205,6 +209,45 @@
   }
   .stat-label{ font-size:.76rem; color:var(--text-muted); }
   .stat-value{ font-size:1.4rem; font-weight:700; font-variant-numeric:tabular-nums; color:var(--text); }
+
+  .report-header{ display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; }
+  .report-subtitle{ margin:0 0 4px; font-size:.8rem; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:.03em; }
+  .month-nav{ display:flex; align-items:center; gap:8px; }
+  .month-nav button{
+    background:var(--surface); border:1px solid var(--line); border-radius:8px;
+    width:30px; height:30px; font-size:1rem; font-weight:700; color:var(--accent);
+    cursor:pointer; line-height:1;
+  }
+  .month-nav button:hover{ background:var(--surface-2); border-color:var(--accent); }
+  .month-nav span{ font-weight:700; font-size:.86rem; min-width:96px; text-align:center; }
+
+  .category-list{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:8px; }
+  .category-row{
+    background:var(--surface); border:1px solid var(--line); border-radius:12px;
+    padding:12px 14px; box-shadow:var(--shadow);
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+  }
+  .category-row .cat-name{ font-weight:700; font-size:.9rem; }
+  .category-row .cat-stats{ font-size:.78rem; color:var(--text-muted); }
+  .category-row .cat-total{ font-weight:700; color:var(--accent); font-variant-numeric:tabular-nums; font-size:.92rem; white-space:nowrap; }
+
+  .daily-list{
+    list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:6px;
+    max-height:260px; overflow-y:auto;
+  }
+  .daily-row{
+    display:flex; justify-content:space-between; align-items:center;
+    padding:9px 12px; background:var(--surface); border:1px solid var(--line);
+    border-radius:10px; font-size:.85rem;
+  }
+  .daily-row .d-date{ font-weight:600; }
+  .daily-row .d-value{ font-weight:700; color:var(--accent); font-variant-numeric:tabular-nums; }
+
+  .month-total-row{
+    display:flex; justify-content:space-between; align-items:center;
+    background:var(--accent); color:var(--accent-ink); border-radius:14px;
+    padding:16px; font-weight:700; font-size:1.05rem; box-shadow:var(--shadow);
+  }
 
   .admin-form:not([hidden]){
     display:flex; flex-direction:column; gap:12px;
@@ -238,6 +281,11 @@
     cursor:pointer; text-decoration:none;
   }
   .remind-btn:hover{ background:var(--accent); color:var(--accent-ink); }
+  .unblock-btn{
+    flex:none; background:none; border:1px solid var(--accent); color:var(--accent);
+    border-radius:8px; padding:8px 10px; font:inherit; font-size:.8rem; font-weight:600; cursor:pointer;
+  }
+  .unblock-btn:hover{ background:var(--accent); color:var(--accent-ink); }
   a.continue-btn:not([hidden]){ display:block; text-align:center; text-decoration:none; }
 
   .clients-list li{
@@ -406,9 +454,42 @@
     </div>
 
     <div id="adminContent" hidden>
-      <button type="button" class="logout-btn" id="logoutBtn">Sair</button>
+      <button type="button" class="logout-btn" id="logoutBtn">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+          <polyline points="16 17 21 12 16 7"/>
+          <line x1="21" y1="12" x2="9" y2="12"/>
+        </svg>
+        Sair
+      </button>
       <div class="admin-section">
         <div class="stats-row" id="statsRow"></div>
+      </div>
+
+      <div class="admin-section">
+        <div class="report-header">
+          <h2 class="section-title">Relatório do mês</h2>
+          <div class="month-nav">
+            <button type="button" id="prevMonthBtn" aria-label="Mês anterior">‹</button>
+            <span id="reportMonthLabel">—</span>
+            <button type="button" id="nextMonthBtn" aria-label="Mês seguinte">›</button>
+          </div>
+        </div>
+
+        <div>
+          <p class="report-subtitle">Por categoria</p>
+          <ul class="category-list" id="categoryList"></ul>
+        </div>
+
+        <div>
+          <p class="report-subtitle">Lucro por dia</p>
+          <ul class="daily-list" id="dailyList"></ul>
+        </div>
+
+        <div class="month-total-row">
+          <span>Total do mês</span>
+          <span id="monthTotalValue">R$ 0,00</span>
+        </div>
       </div>
 
       <div class="admin-section">
@@ -437,6 +518,11 @@
           </div>
           <button type="submit" class="continue-btn">Bloquear horário</button>
         </form>
+      </div>
+
+      <div class="admin-section">
+        <h2 class="section-title">Horários bloqueados</h2>
+        <ul class="booking-list" id="blockedList"></ul>
       </div>
 
       <div class="admin-section">
@@ -553,6 +639,12 @@
     var logoutBtn = document.getElementById('logoutBtn');
     var adminContent = document.getElementById('adminContent');
     var statsRow = document.getElementById('statsRow');
+    var prevMonthBtn = document.getElementById('prevMonthBtn');
+    var nextMonthBtn = document.getElementById('nextMonthBtn');
+    var reportMonthLabel = document.getElementById('reportMonthLabel');
+    var categoryList = document.getElementById('categoryList');
+    var dailyList = document.getElementById('dailyList');
+    var monthTotalValue = document.getElementById('monthTotalValue');
     var blockForm = document.getElementById('blockForm');
     var blockDate = document.getElementById('blockDate');
     var blockTime = document.getElementById('blockTime');
@@ -561,6 +653,7 @@
     var priceBarba = document.getElementById('priceBarba');
     var priceRealinhamento = document.getElementById('priceRealinhamento');
     var bookingList = document.getElementById('bookingList');
+    var blockedList = document.getElementById('blockedList');
     var clientsList = document.getElementById('clientsList');
     var contactForm = document.getElementById('contactForm');
     var shopPhone = document.getElementById('shopPhone');
@@ -586,10 +679,115 @@
 
     function dateKey(d){ return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); }
 
-    function simpleHash(str){
-      var h = 0;
-      for (var i = 0; i < str.length; i++){ h = (h * 31 + str.charCodeAt(i)) >>> 0; }
-      return h;
+    // ---------- Relatório do mês (lucro por dia, por categoria e total) ----------
+    var MONTH_NAMES = ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
+    var SERVICE_ORDER = ['Corte de cabelo', 'Cabelo + barba', 'Realinhamento capilar'];
+    var reportMonth = new Date();
+    reportMonth.setDate(1);
+    reportMonth.setHours(0, 0, 0, 0);
+    var lastRealBookings = [];
+
+    function monthKeyOf(date){ return date.getFullYear() + '-' + pad(date.getMonth() + 1); }
+    function daysInMonth(date){ return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate(); }
+    function shortDateBR(dateStr){
+      var parts = String(dateStr || '').split('-');
+      return parts.length === 3 ? (parts[2] + '/' + parts[1]) : dateStr;
+    }
+
+    function renderMonthlyReport(){
+      if (!reportMonthLabel) return;
+      var monthName = MONTH_NAMES[reportMonth.getMonth()];
+      reportMonthLabel.textContent = monthName.charAt(0).toUpperCase() + monthName.slice(1) + ' de ' + reportMonth.getFullYear();
+
+      var key = monthKeyOf(reportMonth);
+      var inMonth = lastRealBookings.filter(function(item){ return String(item.data.date || '').indexOf(key) === 0; });
+
+      // Lucro por dia
+      var byDay = {};
+      inMonth.forEach(function(item){
+        var d = item.data.date;
+        byDay[d] = (byDay[d] || 0) + parseBRL(item.data.price);
+      });
+      var dayKeys = Object.keys(byDay).sort();
+
+      dailyList.innerHTML = '';
+      if (dayKeys.length === 0){
+        var noDaily = document.createElement('p');
+        noDaily.className = 'hint';
+        noDaily.textContent = 'Nenhum lucro registrado nesse mês.';
+        dailyList.appendChild(noDaily);
+      } else {
+        dayKeys.forEach(function(d){
+          var row = document.createElement('li');
+          row.className = 'daily-row';
+          var dateSpan = document.createElement('span');
+          dateSpan.className = 'd-date';
+          dateSpan.textContent = shortDateBR(d);
+          var valueSpan = document.createElement('span');
+          valueSpan.className = 'd-value';
+          valueSpan.textContent = formatBRL(byDay[d]);
+          row.appendChild(dateSpan);
+          row.appendChild(valueSpan);
+          dailyList.appendChild(row);
+        });
+      }
+
+      // Por categoria: quantidade, média por dia e total
+      var today = new Date();
+      var isCurrentMonth = (today.getFullYear() === reportMonth.getFullYear() && today.getMonth() === reportMonth.getMonth());
+      var divisor = isCurrentMonth ? Math.max(today.getDate(), 1) : daysInMonth(reportMonth);
+
+      var byCategory = {};
+      inMonth.forEach(function(item){
+        var name = item.data.service || 'Outro';
+        if (!byCategory[name]) byCategory[name] = { count: 0, total: 0 };
+        byCategory[name].count += 1;
+        byCategory[name].total += parseBRL(item.data.price);
+      });
+
+      categoryList.innerHTML = '';
+      var categoryNames = SERVICE_ORDER.slice();
+      Object.keys(byCategory).forEach(function(name){
+        if (categoryNames.indexOf(name) === -1) categoryNames.push(name);
+      });
+      var monthTotal = 0;
+      categoryNames.forEach(function(name){
+        var stats = byCategory[name] || { count: 0, total: 0 };
+        monthTotal += stats.total;
+        var avg = stats.count / divisor;
+        var li = document.createElement('li');
+        li.className = 'category-row';
+        var left = document.createElement('div');
+        var nameP = document.createElement('p');
+        nameP.className = 'cat-name';
+        nameP.textContent = name;
+        var statsP = document.createElement('p');
+        statsP.className = 'cat-stats';
+        statsP.textContent = stats.count + ' corte' + (stats.count === 1 ? '' : 's') + ' · média ' + avg.toFixed(1).replace('.', ',') + '/dia';
+        left.appendChild(nameP);
+        left.appendChild(statsP);
+        var totalSpan = document.createElement('span');
+        totalSpan.className = 'cat-total';
+        totalSpan.textContent = formatBRL(stats.total);
+        li.appendChild(left);
+        li.appendChild(totalSpan);
+        categoryList.appendChild(li);
+      });
+
+      monthTotalValue.textContent = formatBRL(monthTotal);
+    }
+
+    if (prevMonthBtn){
+      prevMonthBtn.addEventListener('click', function(){
+        reportMonth.setMonth(reportMonth.getMonth() - 1);
+        renderMonthlyReport();
+      });
+    }
+    if (nextMonthBtn){
+      nextMonthBtn.addEventListener('click', function(){
+        reportMonth.setMonth(reportMonth.getMonth() + 1);
+        renderMonthlyReport();
+      });
     }
 
     function buildSlots(){
@@ -602,22 +800,11 @@
       return slots;
     }
 
-    // Exemplo determinístico, usado só quando o banco de dados não está
-    // disponível nesta visualização (assim a tela nunca fica quebrada).
-    function mockOccupied(dateStr, slots){
-      var seed = simpleHash(dateStr);
-      var occupied = {};
-      var count = 2 + (seed % 3);
-      for (var i = 0; i < count; i++){
-        occupied[slots[(seed + i * 7) % slots.length]] = true;
-      }
-      return occupied;
-    }
-
-    // Horários já ocupados NAQUELE dia, vindos de agendamentos reais
-    // salvos por qualquer pessoa que usou o app.
+    // Horários já ocupados NAQUELE dia — só entram aqui agendamentos reais
+    // (feitos por clientes) ou horários que o admin bloqueou de propósito.
+    // Nunca inventamos horário ocupado: se o banco não responder, a tela
+    // simplesmente mostra tudo livre em vez de fingir que algo está bloqueado.
     async function occupiedTimesFor(dateStr){
-      var slots = buildSlots();
       var db = await dbPromise;
       if (db){
         try{
@@ -629,10 +816,10 @@
           });
           return occupied;
         } catch (err){
-          // banco falhou agora: cai no exemplo abaixo em vez de travar a tela
+          // banco falhou agora: não sabemos o que está ocupado, então não bloqueamos nada
         }
       }
-      return mockOccupied(dateStr, slots);
+      return {};
     }
 
     function buildDates(){
@@ -1031,6 +1218,48 @@
       return li;
     }
 
+    function blockedRow(item){
+      var b = item.data;
+      var li = document.createElement('li');
+      li.className = 'booking-row';
+
+      var info = document.createElement('div');
+      info.className = 'info';
+      var when = document.createElement('p');
+      when.className = 'when';
+      when.textContent = pad2DateBR(b.date) + ' às ' + b.time;
+      var who = document.createElement('p');
+      who.className = 'who';
+      who.textContent = 'Bloqueado pelo admin';
+      info.appendChild(when);
+      info.appendChild(who);
+
+      var unblockBtn = document.createElement('button');
+      unblockBtn.type = 'button';
+      unblockBtn.className = 'unblock-btn';
+      unblockBtn.textContent = 'Desbloquear';
+      unblockBtn.addEventListener('click', async function(){
+        unblockBtn.disabled = true;
+        unblockBtn.textContent = 'Desbloqueando…';
+        try{
+          var db = await dbPromise;
+          if (db) await db.doc('bookings/' + item.id).delete();
+          await refreshAdminData();
+        } catch (err){
+          unblockBtn.disabled = false;
+          unblockBtn.textContent = 'Desbloquear';
+        }
+      });
+
+      var actions = document.createElement('div');
+      actions.className = 'row-actions';
+      actions.appendChild(unblockBtn);
+
+      li.appendChild(info);
+      li.appendChild(actions);
+      return li;
+    }
+
     async function refreshAdminData(){
       var db = await dbPromise;
       if (!db){
@@ -1040,7 +1269,11 @@
         noDb.textContent = 'Banco de dados indisponível agora.';
         statsRow.appendChild(noDb);
         bookingList.innerHTML = '';
+        blockedList.innerHTML = '';
         clientsList.innerHTML = '';
+        categoryList.innerHTML = '';
+        dailyList.innerHTML = '';
+        monthTotalValue.textContent = 'R$ 0,00';
         return;
       }
 
@@ -1057,9 +1290,12 @@
       }
 
       var real = [];
+      var blocked = [];
       snap.docs.forEach(function(doc){
         var b = doc.data();
-        if (b && !b.blocked) real.push({ id: doc.id, data: b });
+        if (!b) return;
+        if (b.blocked) blocked.push({ id: doc.id, data: b });
+        else real.push({ id: doc.id, data: b });
       });
 
       var total = real.length;
@@ -1069,6 +1305,9 @@
       statsRow.innerHTML = '';
       statsRow.appendChild(statTile('Agendamentos', String(total)));
       statsRow.appendChild(statTile('Faturamento', formatBRL(revenue)));
+
+      lastRealBookings = real;
+      renderMonthlyReport();
 
       var todayKey = dateKey(new Date());
       var upcoming = real
@@ -1085,6 +1324,22 @@
         bookingList.appendChild(noBookings);
       } else {
         upcoming.forEach(function(item){ bookingList.appendChild(bookingRow(item)); });
+      }
+
+      var upcomingBlocked = blocked
+        .filter(function(item){ return item.data.date >= todayKey; })
+        .sort(function(a, b){
+          return (a.data.date + a.data.time).localeCompare(b.data.date + b.data.time);
+        });
+
+      blockedList.innerHTML = '';
+      if (upcomingBlocked.length === 0){
+        var noBlocked = document.createElement('p');
+        noBlocked.className = 'hint';
+        noBlocked.textContent = 'Nenhum horário bloqueado.';
+        blockedList.appendChild(noBlocked);
+      } else {
+        upcomingBlocked.forEach(function(item){ blockedList.appendChild(blockedRow(item)); });
       }
 
       var seen = {};
