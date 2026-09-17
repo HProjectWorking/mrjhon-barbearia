@@ -72,7 +72,8 @@
   .tagline{ margin:0; color:var(--text-muted); font-size:.98rem; max-width:34ch; }
 
   #view-home:not([hidden]){ display:flex; flex-direction:column; gap:28px; }
-  #view-booking:not([hidden]){ display:flex; flex-direction:column; gap:18px; }
+  #view-booking:not([hidden]){ display:flex; flex-direction:column; gap:24px; }
+  .field-group{ display:flex; flex-direction:column; gap:10px; }
 
   .section-title{
     font-size:1.5rem; color:var(--text); margin-bottom:2px;
@@ -157,8 +158,8 @@
   .continue-btn{ width:100%; padding:14px; font-size:1rem; }
   .continue-btn:disabled{ opacity:.4; cursor:not-allowed; }
 
-  #view-form:not([hidden]){ display:flex; flex-direction:column; gap:16px; }
-  #view-confirm:not([hidden]){ display:flex; flex-direction:column; gap:18px; }
+  #view-form:not([hidden]){ display:flex; flex-direction:column; gap:22px; }
+  #view-confirm:not([hidden]){ display:flex; flex-direction:column; gap:22px; }
 
   #bookingForm{ display:flex; flex-direction:column; }
   .field{ display:flex; flex-direction:column; gap:6px; margin-bottom:14px; }
@@ -199,7 +200,9 @@
   .logout-btn:hover{ background:var(--danger); color:#fff; }
 
   #view-admin:not([hidden]){ display:flex; flex-direction:column; gap:22px; }
-  .admin-section{ display:flex; flex-direction:column; gap:10px; }
+  #adminContent:not([hidden]){ display:flex; flex-direction:column; gap:28px; }
+  #adminLogin:not([hidden]){ display:flex; flex-direction:column; gap:14px; }
+  .admin-section{ display:flex; flex-direction:column; gap:14px; }
   .denied{ text-align:center; color:var(--text-muted); padding:24px 0; }
 
   .stats-row{ display:grid; grid-template-columns:repeat(auto-fit, minmax(130px,1fr)); gap:10px; }
@@ -376,12 +379,12 @@
       <p class="booking-price" id="bookingPrice">R$ 0,00</p>
     </div>
 
-    <div>
+    <div class="field-group">
       <h2 class="section-title">Escolha o dia</h2>
       <div class="date-strip" id="dateStrip" role="listbox" aria-label="Escolha o dia"></div>
     </div>
 
-    <div>
+    <div class="field-group">
       <h2 class="section-title">Escolha o horário</h2>
       <div class="time-grid" id="timeGrid" role="listbox" aria-label="Escolha o horário"></div>
     </div>
