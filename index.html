@@ -73,18 +73,8 @@
   .logo{ width:100%; max-width:220px; height:auto; border-radius:12px; box-shadow:var(--shadow); }
   .tagline{ margin:0; color:var(--text-muted); font-size:.98rem; max-width:34ch; }
 
-  #view-home{ display:flex; flex-direction:column; gap:28px; }
-  #view-booking{ display:flex; flex-direction:column; gap:18px; }
-
-  .phases{ display:flex; flex-direction:column; gap:8px; }
-  .phase-track{ list-style:none; margin:0; padding:0; display:flex; gap:6px; }
-  .phase-track li{
-    flex:1; height:6px; border-radius:99px; background:var(--line);
-  }
-  .phase-track li.current{ background:var(--accent); }
-  .phase-track li.done{ background:var(--accent); opacity:.5; }
-  .phase-caption{ margin:0; font-size:.82rem; color:var(--text-muted); }
-  .phase-caption strong{ color:var(--text); font-weight:600; }
+  #view-home:not([hidden]){ display:flex; flex-direction:column; gap:28px; }
+  #view-booking:not([hidden]){ display:flex; flex-direction:column; gap:18px; }
 
   .section-title{
     font-size:1.5rem; color:var(--text); margin-bottom:2px;
@@ -164,8 +154,8 @@
   .continue-btn{ width:100%; padding:14px; font-size:1rem; }
   .continue-btn:disabled{ opacity:.4; cursor:not-allowed; }
 
-  #view-form{ display:flex; flex-direction:column; gap:16px; }
-  #view-confirm{ display:flex; flex-direction:column; gap:18px; }
+  #view-form:not([hidden]){ display:flex; flex-direction:column; gap:16px; }
+  #view-confirm:not([hidden]){ display:flex; flex-direction:column; gap:18px; }
 
   #bookingForm{ display:flex; flex-direction:column; }
   .field{ display:flex; flex-direction:column; gap:6px; margin-bottom:14px; }
@@ -194,8 +184,12 @@
     font:inherit; font-weight:600; font-size:.82rem; color:var(--text-muted);
     text-decoration:underline; text-underline-offset:2px; cursor:pointer;
   }
+  .logout-btn{
+    align-self:flex-end; background:none; border:none; padding:0;
+    font:inherit; font-weight:600; font-size:.85rem; color:var(--danger); cursor:pointer;
+  }
 
-  #view-admin{ display:flex; flex-direction:column; gap:22px; }
+  #view-admin:not([hidden]){ display:flex; flex-direction:column; gap:22px; }
   .admin-section{ display:flex; flex-direction:column; gap:10px; }
   .denied{ text-align:center; color:var(--text-muted); padding:24px 0; }
 
@@ -207,7 +201,7 @@
   .stat-label{ font-size:.76rem; color:var(--text-muted); }
   .stat-value{ font-size:1.4rem; font-weight:700; font-variant-numeric:tabular-nums; color:var(--text); }
 
-  .admin-form{
+  .admin-form:not([hidden]){
     display:flex; flex-direction:column; gap:12px;
     background:var(--surface); border:1px solid var(--line); border-radius:14px;
     padding:16px; box-shadow:var(--shadow);
@@ -239,7 +233,7 @@
     cursor:pointer; text-decoration:none;
   }
   .remind-btn:hover{ background:var(--accent); color:var(--accent-ink); }
-  a.continue-btn{ display:block; text-align:center; text-decoration:none; }
+  a.continue-btn:not([hidden]){ display:block; text-align:center; text-decoration:none; }
 
   .clients-list li{
     display:flex; justify-content:space-between; gap:10px; font-size:.9rem;
@@ -257,19 +251,6 @@
   </header>
 
   <section id="view-home">
-    <section class="phases" aria-label="Progresso da construção do app">
-      <ol class="phase-track">
-        <li class="done" title="Fase 1: tela inicial e serviços"></li>
-        <li class="done" title="Fase 2: calendário e horários"></li>
-        <li class="done" title="Fase 3: cadastro e confirmação"></li>
-        <li class="done" title="Fase 4: banco de dados"></li>
-        <li class="done" title="Fase 5: painel admin"></li>
-        <li class="done" title="Fase 6: WhatsApp"></li>
-        <li class="current" title="Fase 7: app Android/iOS"></li>
-      </ol>
-      <p class="phase-caption"><strong>Fase 7 de 7</strong> — app Android/iOS</p>
-    </section>
-
     <main>
       <h2 class="section-title">Serviços</h2>
       <ul class="services">
@@ -324,8 +305,7 @@
       </ul>
     </main>
 
-    <footer>Aula 7 de 7 — construído com Claude, uma fase por vez.</footer>
-    <p class="hint install-tip">📲 Dica: abra esse link no celular e use "Adicionar à tela inicial" pra ganhar um atalho com ícone.</p>
+    <p class="hint install-tip" id="installTip" hidden>📲 Dica: abra esse link no celular e use "Adicionar à tela inicial" pra ganhar um atalho com ícone.</p>
     <button type="button" class="admin-entry" id="openAdminBtn">Painel admin</button>
   </section>
 
@@ -398,11 +378,24 @@
     <button type="button" class="back-link" id="backFromAdmin">← Voltar</button>
     <h2 class="section-title">Painel admin</h2>
 
-    <div id="adminDenied" class="denied" hidden>
-      <p>Essa área é só para o Mr. John.</p>
+    <div id="adminLogin" hidden>
+      <form id="adminLoginForm" class="admin-form" novalidate>
+        <div class="field">
+          <label for="adminEmail">E-mail</label>
+          <input type="email" id="adminEmail" name="adminEmail" autocomplete="username" placeholder="seu@email.com">
+        </div>
+        <div class="field">
+          <label for="adminPassword">Senha</label>
+          <input type="password" id="adminPassword" name="adminPassword" autocomplete="current-password" placeholder="Sua senha">
+        </div>
+        <p class="field-error" id="adminLoginError" hidden></p>
+        <button type="submit" class="continue-btn">Entrar</button>
+      </form>
+      <p class="hint" id="adminAuthUnavailable" hidden>Login indisponível nesta visualização — abra pelo endereço publicado do site pra acessar o painel admin.</p>
     </div>
 
     <div id="adminContent" hidden>
+      <button type="button" class="logout-btn" id="logoutBtn">Sair</button>
       <div class="admin-section">
         <div class="stats-row" id="statsRow"></div>
       </div>
@@ -466,12 +459,23 @@
     </div>
   </section>
 </div>
+<script src="https://www.gstatic.com/firebasejs/12.19.0/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/12.19.0/firebase-auth-compat.js"></script><script src="https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore-compat.js"></script>
 <script>
   (function(){
     var viewHome = document.getElementById('view-home');
     var viewBooking = document.getElementById('view-booking');
     var viewForm = document.getElementById('view-form');
     var viewConfirm = document.getElementById('view-confirm');
+
+    // A dica de "adicionar à tela inicial" só faz sentido pra quem está
+    // vendo isso no navegador. Quem já abriu pelo app instalado (ou pelo
+    // atalho da tela inicial) não precisa ver essa dica de novo.
+    var installTip = document.getElementById('installTip');
+    if (installTip){
+      var isStandalone = (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches)
+        || window.navigator.standalone === true;
+      installTip.hidden = isStandalone;
+    }
 
     var bookingService = document.getElementById('bookingService');
     var bookingPrice = document.getElementById('bookingPrice');
@@ -498,21 +502,36 @@
     var newBookingBtn = document.getElementById('newBookingBtn');
     var confirmDbNote = document.getElementById('confirmDbNote');
 
-    // Banco de dados real da fase 4: null enquanto carrega, ou se essa
-    // visualização não tiver o recurso disponível (aí caímos no exemplo).
-    var dbPromise = (window.claude && typeof window.claude.use === 'function')
-      ? window.claude.use('db')
-      : Promise.resolve(null);
-
-    // Quem está vendo a página agora — usado só pra decidir se mostra o painel admin.
-    var userPromise = (window.claude && typeof window.claude.use === 'function')
-      ? window.claude.use('user')
-      : Promise.resolve(null);
+    // Fase 8: banco de dados e login de verdade, via Firebase — funciona em
+    // qualquer navegador, não só dentro do link do Claude. Se por algum
+    // motivo o Firebase não carregar nessa visualização específica, o app
+    // cai de volta pro modo de exemplo em vez de travar a tela.
+    var firebaseConfig = {
+      apiKey: "AIzaSyDOSWHstIZJyI6K8U_WbvKiyztg2xhcOBA",
+      authDomain: "mrjhon-barbearia.firebaseapp.com",
+      projectId: "mrjhon-barbearia",
+      storageBucket: "mrjhon-barbearia.firebasestorage.app",
+      messagingSenderId: "24343617818",
+      appId: "1:24343617818:web:07791bf26a3e8261e0cca3"
+    };
+    var firebaseReady = (typeof firebase !== 'undefined');
+    if (firebaseReady){
+      firebase.initializeApp(firebaseConfig);
+    }
+    var auth = firebaseReady ? firebase.auth() : null;
+    var firestoreDb = firebaseReady ? firebase.firestore() : null;
+    var dbPromise = Promise.resolve(firestoreDb);
 
     var openAdminBtn = document.getElementById('openAdminBtn');
     var backFromAdmin = document.getElementById('backFromAdmin');
     var viewAdmin = document.getElementById('view-admin');
-    var adminDenied = document.getElementById('adminDenied');
+    var adminLogin = document.getElementById('adminLogin');
+    var adminLoginForm = document.getElementById('adminLoginForm');
+    var adminEmail = document.getElementById('adminEmail');
+    var adminPassword = document.getElementById('adminPassword');
+    var adminLoginError = document.getElementById('adminLoginError');
+    var adminAuthUnavailable = document.getElementById('adminAuthUnavailable');
+    var logoutBtn = document.getElementById('logoutBtn');
     var adminContent = document.getElementById('adminContent');
     var statsRow = document.getElementById('statsRow');
     var blockForm = document.getElementById('blockForm');
@@ -1123,21 +1142,9 @@
       shopPhone.value = digits ? maskPhone(digits) : '';
     }
 
-    async function goToAdmin(){
-      viewHome.hidden = true;
-      viewAdmin.hidden = false;
-      adminDenied.hidden = true;
-      adminContent.hidden = true;
-      window.scrollTo(0, 0);
-
-      var user = await userPromise;
-      var allowed = !!(user && typeof user.canEdit === 'function' && user.canEdit());
-      if (!allowed){
-        adminDenied.hidden = false;
-        return;
-      }
-
-      adminContent.hidden = false;
+    // Carrega os dados de verdade do painel — só chamado depois de
+    // confirmar que quem está vendo fez login como admin.
+    async function loadAdminContent(){
       var todayStr = dateKey(new Date());
       blockDate.min = todayStr;
       blockDate.value = todayStr;
@@ -1147,12 +1154,77 @@
       await refreshAdminData();
     }
 
+    // Decide o que mostrar na tela de admin: formulário de login, um aviso
+    // de que o login não está disponível aqui, ou o painel de verdade —
+    // dependendo de quem (se alguém) está autenticado agora.
+    function renderAdminAuthState(){
+      if (!auth){
+        adminLogin.hidden = false;
+        adminLoginForm.hidden = true;
+        adminAuthUnavailable.hidden = false;
+        adminContent.hidden = true;
+        return;
+      }
+      var user = auth.currentUser;
+      if (user){
+        adminLogin.hidden = true;
+        adminContent.hidden = false;
+        loadAdminContent();
+      } else {
+        adminLogin.hidden = false;
+        adminLoginForm.hidden = false;
+        adminAuthUnavailable.hidden = true;
+        adminContent.hidden = true;
+      }
+    }
+
+    async function goToAdmin(){
+      viewHome.hidden = true;
+      viewAdmin.hidden = false;
+      window.scrollTo(0, 0);
+      renderAdminAuthState();
+    }
+
     openAdminBtn.addEventListener('click', goToAdmin);
 
     backFromAdmin.addEventListener('click', function(){
       viewAdmin.hidden = true;
       viewHome.hidden = false;
     });
+
+    if (adminLoginForm){
+      adminLoginForm.addEventListener('submit', async function(e){
+        e.preventDefault();
+        var submitBtn = adminLoginForm.querySelector('button[type="submit"]');
+        var original = submitBtn.textContent;
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Entrando…';
+        adminLoginError.hidden = true;
+        try{
+          await auth.signInWithEmailAndPassword(adminEmail.value.trim(), adminPassword.value);
+          adminPassword.value = '';
+        } catch (err){
+          adminLoginError.textContent = 'E-mail ou senha incorretos.';
+          adminLoginError.hidden = false;
+        }
+        submitBtn.disabled = false;
+        submitBtn.textContent = original;
+      });
+    }
+
+    if (logoutBtn){
+      logoutBtn.addEventListener('click', function(){
+        if (auth) auth.signOut();
+      });
+    }
+
+    if (auth){
+      auth.onAuthStateChanged(function(){
+        // Se o estado de login mudar enquanto a pessoa está na tela de
+        // admin (por exemplo, a sessão expirou), atualiza a tela na hora.
+        if (!viewAdmin.hidden) renderAdminAuthState();
+      });
+    }
 
     contactForm.addEventListener('submit', async function(e){
       e.preventDefault();
